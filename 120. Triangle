@@ -1,0 +1,38 @@
+Given a triangle array, return the minimum path sum from top to bottom.
+
+For each step, you may move to an adjacent number of the row below. More formally,
+if you are on index i on the current row, you may move to either index i or index i + 1 on the next row.
+
+.....................................................................................
+
+class Solution {
+public:
+    int n;
+    int m;
+    // vector<vector<int>> direction = {{1, 0}, {0, 1}};
+    int solve(int i, int j, vector<vector<int>>& triangle,vector<vector<int>>&dp) {
+
+        if (i == n - 1) {
+            return triangle[i][j];
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        // int minm = INT_MAX;
+        int down, diagonal;
+
+        down = triangle[i][j] + solve(i + 1, j, triangle,dp);
+        diagonal = triangle[i][j] + solve(i + 1, j + 1, triangle,dp);
+
+        return dp[i][j]=min(down, diagonal);
+    }
+
+    int minimumTotal(vector<vector<int>>& triangle) {
+        n = triangle.size();
+        m = triangle[0].size();
+        vector<vector<int>>dp(n,vector<int>(n,-1));
+        return solve(0, 0, triangle,dp);
+    }
+};
+
+
