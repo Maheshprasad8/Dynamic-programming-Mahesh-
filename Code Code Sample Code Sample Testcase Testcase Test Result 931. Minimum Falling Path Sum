@@ -1,0 +1,66 @@
+Given an n x n array of integers matrix, return the minimum sum of any falling path through matrix.
+
+A falling path starts at any element in the first row and chooses the element in the next row that is either directly below or diagonally left/right. 
+Specifically, the next element from position (row, col) will be (row + 1, col - 1), (row + 1, col), or (row + 1, col + 1).
+
+............................................................
+
+
+class Solution {
+public:
+    int n;
+    int m;
+    vector<vector<int>> direction = {{1, -1}, {1, 0}, {1, 1}};
+    int solve(int i, int j, vector<vector<int>>& matrix,vector<vector<int>>&dp) {
+        int minm = INT_MAX;
+        if (i == n - 1) {
+            return matrix[i][j];
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        //  int take=0,not_take=0;
+        for (vector<int>& dir : direction) {
+            int i_ = i + dir[0];
+            int j_ = j + dir[1];
+            if (i_ < n && j_ >= 0 && j_ < m) {
+                minm = min(minm, solve(i_, j_, matrix,dp));
+                // cout<<minm<<" ";
+                //  take=matrix[i][j]+solve(i_,j_,matrix);
+                //  cout<<take;
+                //  not_take=solve(i_,j_,matrix);
+            }
+        }
+        return dp[i][j]=matrix[i][j] + minm;
+    }
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        n = matrix.size();
+        m = matrix[0].size();
+    //   vector<vector<int>>dp(n+1,vector<int>(m+1,-1));
+    //     int ans = INT_MAX;
+    //     for (int j = 0; j < m; j++) {
+    //         ans = min(ans, solve(0, j, matrix,dp));
+    //     }
+    //     return ans;
+        // return solve(0,0,matrix);
+
+        // Tabulation method
+
+        vector<vector<int>>dp(n,vector<int>(m,0));
+        // last row remain same
+        for(int j=0;j<m;j++){
+            dp[n-1][j]=matrix[n-1][j];
+        }
+
+        //  build dp table second last row
+        for(int i=n-2;i>=0;i--){
+            for(int j=0;j<m;j++){
+                int down=dp[i+1][j];
+                int left=(j>0)?dp[i+1][j-1]:INT_MAX;
+                int diagonal=(j<m-1)?dp[i+1][j+1]:INT_MAX;
+                dp[i][j]=matrix[i][j]+min({down,left,diagonal});
+            }
+        }
+        return *min_element(dp[0].begin(),dp[0].end());
+    }
+};
