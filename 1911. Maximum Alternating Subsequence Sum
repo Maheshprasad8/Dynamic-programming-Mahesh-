@@ -1,0 +1,50 @@
+The alternating sum of a 0-indexed array is defined as the sum of the elements at even indices minus the sum of the elements at odd indices.
+
+For example, the alternating sum of [4,2,5,3] is (4 + 5) - (2 + 3) = 4.
+Given an array nums, return the maximum alternating sum of any subsequence of nums (after reindexing the elements of the subsequence).
+
+A subsequence of an array is a new array generated from the original array by deleting some elements (possibly none) without
+changing the remaining elements' relative order. For example, [2,7,4] is a subsequence of [4,2,3,7,2,1,4] (the underlined elements), while [2,4,2] is not.
+
+............................................................................................................
+
+
+class Solution {
+public:
+    int n;
+    long long solve(int i, vector<int>& nums, bool flag,
+                    vector<vector<long long>>& dp) {
+        if (i >= n) {
+            return 0;
+        }
+        if (dp[i][flag] != -1) {
+            return dp[i][flag];
+        }
+        long long skip = solve(i + 1, nums, flag, dp);
+        long long val = nums[i];
+        if (flag == false) {
+            val = -val;
+        }
+        long long take = solve(i + 1, nums, !flag, dp) + val;
+        return dp[i][flag] = max(skip, take);
+    }
+
+    long long maxAlternatingSum(vector<int>& nums) {
+        n = nums.size();
+        // true->+
+        // vector<vector<long long>> dp(n + 1, vector<long long>(2, -1));
+        // return solve(0, nums, true, dp);
+
+        vector<vector<long long>> dp(n + 1, vector<long long>(2, 0));
+        // even-0,odd-1
+        for (int i = 1; i < n + 1; i++) {
+            // EVen
+            dp[i][0] = max(dp[i - 1][1] - nums[i - 1], dp[i - 1][0]);
+            // ODD
+            dp[i][1] = max(dp[i - 1][0] + nums[i - 1], dp[i - 1][1]);
+        }
+        return max(dp[n][1], dp[n][0]);
+    }
+};
+
+ 
