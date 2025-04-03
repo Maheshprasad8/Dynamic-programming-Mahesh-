@@ -1,0 +1,62 @@
+Given an array arr of non-negative integers and an integer target, the task is to count all subsets of the array whose sum is equal to the given target.
+
+............................................
+
+
+
+class Solution {
+  public:
+  int n;
+  int solve(int i,vector<int>&arr,int target,vector<vector<int>>&dp){
+     
+    //  if(target==0){
+    //       return 1;
+    //   }
+    //   else{
+    //       return 0;
+    //   }
+      if(i==n){
+          return (target==0)?1:0;
+      }
+      if(dp[i][target]!=-1){
+          return dp[i][target];
+      }
+  
+      int take=0;
+      if(target>=arr[i]){
+       take=solve(i+1,arr,target-arr[i],dp);
+      }
+      int not_take=solve(i+1,arr,target,dp);
+ 
+      return dp[i][target]=take+not_take;
+  }
+    int perfectSum(vector<int>& arr, int target) {
+        n=arr.size();
+        // vector<vector<int>>dp(n+1,vector<int>(target+1,-1));
+        // return solve(0,arr,target,dp);
+        
+        
+        // BOTTOM APPROACH
+        
+        vector<vector<int>>dp(n+1,vector<int>(target+1,0));
+        for(int i=0;i<n;i++){
+            dp[i][0]=1;
+        }
+        if(arr[0]<=target){
+            dp[0][arr[0]]=1;
+        }
+        for(int i=1;i<n;i++){
+            for(int tar=1;tar<=target;tar++){
+                int not_take=dp[i-1][tar];
+                int take=0;
+                if(arr[i]<=tar){
+                    take=dp[i-1][tar-arr[i]];
+                }
+                dp[i][tar]=not_take+take;
+            }
+        }
+        return dp[n-1][target];
+    }
+};
+
+
