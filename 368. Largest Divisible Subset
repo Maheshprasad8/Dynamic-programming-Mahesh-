@@ -1,0 +1,64 @@
+Given a set of distinct positive integers nums, return the largest subset answer such that every pair (answer[i], answer[j]) of elements in this subset satisfies:
+
+answer[i] % answer[j] == 0, or
+answer[j] % answer[i] == 0
+If there are multiple solutions, return any of them.
+\
+
+.........................................................................
+
+
+class Solution {
+public:
+    void solve(int i, vector<int>& nums, vector<int>& res, vector<int>& temp,
+               int prev) {
+        if (i >= nums.size()) {
+            if (temp.size() > res.size()) {
+                res = temp;
+            }
+            return;
+        }
+
+        if (prev == -1 || nums[i] % prev == 0) {
+            temp.push_back(nums[i]);
+            solve(i + 1, nums, res, temp, nums[i]);
+            temp.pop_back(); // becoz not_take mai bhi consider kr skte hain
+        }
+        solve(i + 1, nums, res, temp, prev);
+    }
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+
+        int n = nums.size();
+        sort(nums.begin(), nums.end());
+        // vector<int> res;
+        // vector<int> temp;
+        // int prev = -1;
+        // solve(0, nums, res, temp, prev);
+        // return res;
+
+        vector<int> dp(n, 1);
+        vector<int> prev(n, -1);
+        int lastIdx = -0;
+        int maxL = 1;
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] % nums[j] == 0) {
+                    if (dp[i] < dp[j]+ 1) {
+                        dp[i] = dp[j] + 1;
+                        prev[i] = j;
+                    }
+                    if (dp[i] > maxL) {
+                        maxL = dp[i];
+                        lastIdx = i;
+                    }
+                }
+            }
+        }
+        vector<int> res;
+        while (lastIdx != -1) {
+            res.push_back(nums[lastIdx]);
+            lastIdx = prev[lastIdx];
+        }
+        return res;
+    }
+};
