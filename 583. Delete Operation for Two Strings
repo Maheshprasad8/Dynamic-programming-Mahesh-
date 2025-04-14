@@ -1,0 +1,41 @@
+Given two strings word1 and word2, return the minimum number of steps required to make word1 and word2 the same.
+
+In one step, you can delete exactly one character in either string.
+
+......................................................
+
+
+class Solution {
+public:
+    int n;
+    int m;
+    int solve(int idx1, int idx2, string& word1, string& word2,
+              vector<vector<int>>& dp) {
+        if (idx1 < 0 || idx2 < 0) {
+            return 0;
+        }
+        // int take;
+        // int not_take;
+        if (dp[idx1][idx2] != -1) {
+            return dp[idx1][idx2];
+        }
+        if (word1[idx1] == word2[idx2]) {
+            return dp[idx1][idx2] =
+                       1 + solve(idx1 - 1, idx2 - 1, word1, word2, dp);
+        }
+
+        else {
+            return dp[idx1][idx2] =
+                       max(solve(idx1 - 1, idx2, word1, word2, dp),
+                           solve(idx1, idx2 - 1, word1, word2, dp));
+        }
+        // return max(take, not_take);
+    }
+    int minDistance(string word1, string word2) {
+        n = word1.length();
+        m = word2.length();
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, -1));
+        int k = solve(n - 1, m - 1, word1, word2, dp);
+        return (n - k) + (m - k);
+    }
+};
