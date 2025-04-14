@@ -1,0 +1,53 @@
+Given a string s, find the longest palindromic subsequence's length in s.
+
+A subsequence is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements.
+
+.............................................
+
+
+
+class Solution {
+public:
+    int n;
+    int solve(int idx1, int idx2, string& s, string& rev_s,
+              vector<vector<int>>& dp) {
+        if (idx1 < 0 || idx2 < 0) {
+            return 0;
+        }
+        if (dp[idx1][idx2] != -1) {
+            return dp[idx1][idx2];
+        }
+        if (s[idx1] == rev_s[idx2]) {
+            return dp[idx1][idx2] = 1 + solve(idx1 - 1, idx2 - 1, s, rev_s, dp);
+        } else {
+            return dp[idx1][idx2] = max(solve(idx1 - 1, idx2, s, rev_s, dp),
+                                        solve(idx1, idx2 - 1, s, rev_s, dp));
+        }
+    }
+    int longestPalindromeSubseq(string s) {
+        string rev_s = s;
+        reverse(rev_s.begin(), rev_s.end());
+        n = s.size();
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
+
+        // return solve(n - 1, n - 1, s, rev_s, dp);
+
+        // Similarly Tabulation
+
+        //    Space Optimized
+
+        vector<int> prev(n + 1, 0),
+            curr(n + 1, 0) ;
+            for (int idx1 = 1; idx1 <= n; idx1++) {
+            for (int idx2 = 1; idx2 <= n; idx2++) {
+                if (s[idx1 - 1] == rev_s[idx2 - 1]) {
+                    curr[idx2] = 1 + prev[idx2 - 1];
+                } else {
+                    curr[idx2] = max(prev[idx2], curr[idx2 - 1]);
+                }
+            }
+            prev = curr;
+        }
+        return prev[n];
+    }
+};
